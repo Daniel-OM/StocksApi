@@ -1,0 +1,35 @@
+
+{% extends "layout.html" %}
+
+{% block title %}
+    Vehicle History
+{% endblock %}
+
+{% block styles %}
+<style>
+    
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-body mt-0">
+                Esto es un proyecto realizado por Manuel para la asignatura de programación en python.
+                Se trata de una aplicación que obtiene datos de una empresa introducida mediante el  uso
+                de webscraping.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('footer').classList.add('navbar-footer-bottom');
+    });
+</script>
+{% endblock %}

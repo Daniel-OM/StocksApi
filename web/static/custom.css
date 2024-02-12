@@ -1,0 +1,91 @@
+
+:root {
+    --primary: rgb(0, 149, 255);
+    --text: rgb(30, 30, 30);
+    --white: rgb(255, 255, 255);
+    --black: rgb(0, 0, 0);
+    --background: rgb(255, 255, 255);
+}
+
+a {
+    text-decoration: none;
+    color: var(--text);
+}
+
+.navbar {
+    background-color: var(--background);
+    border-width: 1px !important;
+}
+.navbar-footer-bottom {
+    bottom: 0 !important;
+    position: absolute !important;
+    width: 100% !important;
+}
+
+.row {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.card {
+    background-color: var(--background);
+    color: var(--text);
+    border-width: 1px !important;
+    border-radius: 1.5rem !important;
+    margin-bottom: 1rem;
+    padding: 1rem;
+}
+.card-header {
+    background-color: var(--background);
+    color: var(--text);
+    border-width: 1px !important;
+    border-radius: 1.5rem !important;
+    border-bottom:0px;
+}
+
+.btn {
+    border-radius: 0.8rem !important;
+}
+
+
+.custom-icon {
+    display: inline-block;
+    width: 16.3px;
+    height: 16.3px;
+    overflow: hidden;
+}
+.custom-icon-color img{
+    filter: invert(90%) brightness(45%); /* invert(90%) sepia(0%) saturate(80%) brightness(40%) contrast(80%); */
+}
+.custom-icon-color:hover img{
+    filter: invert(90%) brightness(20%);
+}
+
+.ml-auto {
+    /* margin-right: auto!important; */
+    margin-left: auto!important;
+}
+.mr-auto {
+    margin-right: auto!important;
+}
+
+@media (min-width: 1200px) {
+    .border-top-xl-0 {
+        border: none !important;
+    }
+    .mx-auto-xl {
+        margin-right: auto!important;
+        margin-left: auto!important;
+    }
+}
+@media (max-width: 1200px) {
+    .mx-auto-sm {
+        margin-right: auto!important;
+        margin-left: auto!important;
+    }
+}
+@media (max-width: 576px) {
+    .col-sm-6 {
+        margin-top: 1rem;
+    }
+}
