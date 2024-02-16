@@ -11,7 +11,7 @@ sys.path.append('..')
 
 from flask import Blueprint, flash, redirect, render_template, request, url_for
     
-from .scraper import getMain   
+from .scraper import getTickerData   
 
 # checKey = lambda k, dic: dic[k] if k in dic else None
 def checKey(k, dic):
@@ -40,9 +40,9 @@ def ticker_get():
             for k, v in request.form.to_dict(flat=False).items() if v or v > 0 or len(v) > 0}
         
         if data['company'] != '':
-            data = getMain(data['company'])
+            data = getTickerData(data['company'])
         elif data['symbol'] != '':
-            data = getMain(data['symbol'])
+            data = getTickerData(data['symbol'])
         else:
             message = 'ERROR: There was an error while runing the search! There are no company or symbol.'
         
