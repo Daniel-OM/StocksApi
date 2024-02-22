@@ -14,8 +14,12 @@ class YahooScraper:
     __api_delayed = 'https://query1.finance.yahoo.com/'
     __api = 'https://query2.finance.yahoo.com/'
 
-    def __init__(self, verbose:bool=False) -> None:
+    def __init__(self, lang:str='es-ES', verbose:bool=False) -> None:
 
+        self.lang: dict = {
+            'lang':lang,
+            'region':lang.split('-')[-1],
+        }
         self.verbose: bool = verbose
 
     def _request(self, url:str, headers:dict=None, params:dict=None, method:Method=Method.GET) -> requests.Response:
@@ -24,6 +28,9 @@ class YahooScraper:
             headers = self.headers
         else:
             headers = {**self.headers, **headers}
+            
+        if params != None:
+            params = {**params, **self.lang}
         
         if method == self.Method.GET:
             return requests.get(url, params=params, headers=headers)
@@ -37,8 +44,6 @@ class YahooScraper:
         url = f'{self.__api}v1/finance/search'
         params = {
             'q':text,
-            'lang':'en-US',
-            'region':'US',
             'quotesCount':'6',
             'newsCount':'2',
             'listsCount':'2',
@@ -68,8 +73,6 @@ class YahooScraper:
         params = {
             'formatted': 'true', 
             'crumb': 'IHtSUBEG..D', 
-            'lang': 'en-US', 
-            'region': 'US', 
             'modules': ','.join(info),
             'corsDomain': 'finance.yahoo.com'
         }
@@ -81,7 +84,7 @@ class YahooScraper:
     
     def getQuote(self, ticker:str, data:list=['longName', 'regularMarketPrice', 'underlyingSymbol', 'fullExchangeName']) -> dict:
 
-        url = 'https://query1.finance.yahoo.com/v7/finance/quote'
+        url = f'{self.__api_delayed}v7/finance/quote'
         headers = {
             'host': 'query2.finance.yahoo.com',
             'origin': 'https://finance.yahoo.com',
@@ -90,8 +93,6 @@ class YahooScraper:
         params = {
             'formatted': 'true', 
             'crumb': 'IHtSUBEG..D', 
-            'lang': 'en-US', 
-            'region': 'US', 
             'symbols': ticker, 
             'fields': ','.join(data), 
             'corsDomain': 'finance.yahoo.com'
@@ -113,8 +114,6 @@ class YahooScraper:
         params = {
             'formatted': True,
             'crumb': 'IHtSUBEG..D',
-            'lang': 'en-US',
-            'region': 'US',
             'modules': ','.join(financials),
             'corsDomain': 'finance.yahoo.com',
         }
@@ -130,8 +129,6 @@ class YahooScraper:
         url = f'{self.__api_delayed}ws/fundamentals-timeseries/v1/finance/timeseries/{ticker}'
 
         params = {
-            'lang':'en-US',
-            'region': 'US', 
             'symbol': ticker, 
             'padTimeSeries': 'true', 
             'type': ','.join(fundamentals),
