@@ -24,12 +24,11 @@ def entityToDict(entity, hidden_fields:list=[]) -> dict:
 
 views = Blueprint('views', __name__)
 
-@views.route("/")
-@views.route("/home")
+@views.route("/stocksfundamentals")
 def home() -> str:
     return render_template('home.html')
 
-@views.route("/ticker", methods=["GET", "POST"])
+@views.route("/stocksfundamentals/ticker", methods=["GET", "POST"])
 def ticker_get():
     
     if request.method == 'POST':
@@ -51,6 +50,6 @@ def ticker_get():
     else:
         return 'You are UNAUTHORIZED to edit this vehicle!'
 
-@views.route("/about")
+@views.route("/stocksfundamentals/about")
 def about() -> str:
     return render_template('about.html')
