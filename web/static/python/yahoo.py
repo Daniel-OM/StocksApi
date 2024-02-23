@@ -4,13 +4,14 @@ import enum
 import requests
 from bs4 import BeautifulSoup
 
-class YahooScraper:
+from .data import DataProvider
+
+class YahooFinance(DataProvider):
 
     class Method(enum.Enum):
         GET: str = 'GET'
         POST: str = 'POST'
     
-    headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'}
     __api_delayed = 'https://query1.finance.yahoo.com/'
     __api = 'https://query2.finance.yahoo.com/'
 
@@ -25,9 +26,9 @@ class YahooScraper:
     def _request(self, url:str, headers:dict=None, params:dict=None, method:Method=Method.GET) -> requests.Response:
 
         if headers == None:
-            headers = self.headers
+            headers = self._random_header()
         else:
-            headers = {**self.headers, **headers}
+            headers = {**self._random_header(), **headers}
             
         if params != None:
             params = {**params, **self.lang}
@@ -157,41 +158,10 @@ class YahooScraper:
             'BETA': html.find('td', attrs={'data-test': 'BETA_5Y-value'}).get_text(),
         }
 
-
-def getTickerData(text:str) -> dict:
-
-    ys = YahooScraper(verbose=True)
-    ticker: str = ys.searchText(text)['quotes'][0]['symbol']
-    result: dict = ys.getKPI(ticker=ticker)
-    info: dict = ys.getCompanyInfo(ticker=ticker, info=['assetProfile'])['quoteSummary']['result'][0]['assetProfile']
-    quote: dict = ys.getQuote(ticker=ticker)['quoteResponse']['result'][0]
-    income_sheet: dict = ys.getFinancials(ticker=ticker)['quoteSummary']['result'][0]
-    balance_sheet: dict = ys.getFundamentalTimeseries(ticker=ticker, 
-        fundamentals=['annualTotalAssets', 'annualTotalLiabilitiesNetMinorityInterest'])['timeseries']['result']
-    
-    result['Ticker'] = ticker
-    result['Company'] = quote['longName']
-    result['Exchange'] = quote['fullExchangeName']
-    result['Price'] = {'Value': quote['regularMarketPrice']['raw'], 
-                    'Time': quote['regularMarketTime']['fmt']}
-    result['Sector'] = info['sector']
-    result['Sub-Sector'] = info['industry']
-    result['Country'] = info['country']
-    result['Employees'] = info['fullTimeEmployees']
-    result['Description'] = info['longBusinessSummary']
-    result['Revenue'] = {'TTM': sum([i['totalRevenue']['raw'] for i in income_sheet['incomeStatementHistoryQuarterly']['incomeStatementHistory']]), 
-            'Last':income_sheet['incomeStatementHistory']['incomeStatementHistory'][0]['totalRevenue']['fmt']}
-    result['Net-Earnings'] = {'TTM':sum([i['netIncome']['raw'] for i in income_sheet['incomeStatementHistoryQuarterly']['incomeStatementHistory']]), 
-            'Last':income_sheet['incomeStatementHistory']['incomeStatementHistory'][0]['netIncome']['fmt']}
-    result['Assets'] = balance_sheet[0]['annualTotalAssets'][-1]['reportedValue']['fmt']
-    result['Liabilities'] = balance_sheet[1]['annualTotalLiabilitiesNetMinorityInterest'][-1]['reportedValue']['fmt']
-    
-    return result
-
 if __name__ == '__main__':
     
     text: str = 'aapl'
-    ys = YahooScraper(verbose=True)
+    ys = YahooFinance(verbose=True)
     ticker: str = ys.searchText(text)['quotes'][0]['symbol']
     result: dict = ys.getKPI(ticker=ticker)
     info: dict = ys.getCompanyInfo(ticker=ticker, info=['assetProfile'])['quoteSummary']['result'][0]['assetProfile']

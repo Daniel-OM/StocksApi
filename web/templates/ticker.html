@@ -1,0 +1,218 @@
+
+{% extends "layout.html" %}
+
+{% block title %}
+    StocksApi
+{% endblock %}
+
+{% block styles %}
+<style>
+    
+</style>
+{% endblock %}
+
+{% block sidebar %}
+{% endblock %}
+
+{% block content %}
+
+{% if (message | length) > 0 %}
+    <div class="alert alert-danger" role="alert">
+        {{ message }}
+    </div>
+{% endif %}
+
+<!-- Search card -->
+<div class="row">
+    <div class="col">
+        <div class="card">
+
+            <div class="card-body mt-0">
+				<form name="ticker_form" action="/ticker" method="post" onsubmit="return formValidation()">
+
+                    <div class="row">
+                        <div class="col-sm-6 mt-0">
+                            <label class="form-label">Compañía</label>
+                            <input id="company" name="company" type="text" placeholder="Ej: Apple" class="form-control">
+                        </div>
+
+                        <div class="col-sm-6">
+                            <label class="form-label">Símbolo</label>
+                            <input id="symbol" name="symbol" type="text" placeholder="Ej: AAPL" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <button type="submit" class="btn btn-primary mt-3">SEARCH</button>
+                    </div>
+                        
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if (data | length) > 0 %}
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h1>{{ data['Company'] }} ({{ data['Ticker'] }})</h1>
+                    <div id="logotype"> {{ data['Logotype'] }} </div>
+                </div>
+
+                <div class="card-body mt-0">
+                    <table style="width:100%;">
+                        <tr>
+                            <th>Mercado</th>
+                            <td> {{ data['Exchange'] }} </td>
+                            <th>Sector</th>
+                            <td> {{ data['Sector'] }} </td>
+                        </tr>
+                        <tr class="ms-5">
+                            <th>País</th>
+                            <td> {{ data['Country'] }} </td>
+                            <th>Sub Sector</th>
+                            <td> {{ data['Sub-Sector'] }} </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="card-body mt-0">
+                    {{ data['Description'] }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Blocks with chart -->
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header border-bottom-0 pb-1 mb-0">
+                    <div class="text-center">
+                        <span class="fw-medium mb-1">Empleados</span>
+                        <h2 class="fw-bold mb-0">{{ data['Employees'] }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header border-bottom-0 pb-1 mb-0">
+                    <div class="text-center">
+                        <span class="fw-medium mb-1">Activos</span>
+                        <h2 class="fw-bold mb-0">{{ data['Assets'] }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header border-bottom-0 pb-1 mb-0">
+                    <div class="text-center">
+                        <span class="fw-medium mb-1">Pasivos</span>
+                        <h2 class="fw-bold mb-0">{{ data['Liabilities'] }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Price -->
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header border-bottom-0 pb-1 mb-0">
+                    <div class="text-center">
+                        <span class="fw-medium mb-1">Precio</span>
+                        <h2 class="fw-bold mb-0">{{ data['Price']['Value'] }}</h2>
+                        <div class="fw-muted mb-0">{{ data['Price']['Time'] }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header border-bottom-0 pb-1 mb-0">
+                    <div class="text-center">
+                        <span class="fw-medium mb-1">Ingresos Brutos</span>
+                        <h2 class="fw-bold mb-0">{{ data['Revenue']['TTM'] }}</h2>
+                        <div class="fw-muted mb-0">{{ data['Revenue']['Last'] }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header border-bottom-0 pb-1 mb-0">
+                    <div class="text-center">
+                        <span class="fw-medium mb-1">Beneficios Netos</span>
+                        <h2 class="fw-bold mb-0">{{ data['Net-Earnings']['TTM'] }}</h2>
+                        <div class="fw-muted mb-0">{{ data['Net-Earnings']['Last'] }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Ratios -->
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header border-bottom-0 pb-1 mb-0">
+                    <div class="text-center">
+                        <span class="fw-medium mb-1">Beneficio Por Acción</span>
+                        <h2 class="fw-bold mb-0">{{ data['BPA'] }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header border-bottom-0 pb-1 mb-0">
+                    <div class="text-center">
+                        <span class="fw-medium mb-1">Price Earnings Ratio</span>
+                        <h2 class="fw-bold mb-0">{{ data['PER'] }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header border-bottom-0 pb-1 mb-0">
+                    <div class="text-center">
+                        <span class="fw-medium mb-1">Beta</span>
+                        <h2 class="fw-bold mb-0">{{ data['BETA'] }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+    function formValidation() {
+        let company = document.forms["ticker_form"]["company"].value;
+        let symbol = document.forms["ticker_form"]["symbol"].value;
+        if (company == "" & symbol == "") {
+            alert("Debes especificar el nombre de la empresa o su símbolo.");
+            return false;
+        }
+    }
+</script>
+
+{% if (data | length) > 0 %}
+    <script>
+        document.getElementById('company').value = "{{ data['Company'] }}";
+        document.getElementById('symbol').value = "{{ data['Ticker'] }}";
+    </script>
+{% else %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('footer').classList.add('navbar-footer-bottom');
+        });
+    </script>
+{% endif %}
+
+{% endblock %}
