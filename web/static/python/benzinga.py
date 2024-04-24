@@ -789,7 +789,7 @@ class Benzinga(DataProvider):
 
         return data
 
-    def earningsHistoric(self, date_from:str='2000-01-01', date_to:str='2023-01-26', 
+    def earningsHistoric(self, date_from:str=None, date_to:str=None, 
         df:bool=True) -> (dict | pd.DataFrame):
 
         '''
@@ -822,6 +822,7 @@ class Benzinga(DataProvider):
  
         finished: bool = False
         dfs: list = []
+        date_from = date_from if isinstance(date_from, str) else date_from.strftime('%Y-%m-%d')
         temp_to: str = date_to if isinstance(date_to, str) else date_to.strftime('%Y-%m-%d')
         while not finished:
         
@@ -829,7 +830,7 @@ class Benzinga(DataProvider):
             
             params: dict = {
                 'token': token,
-                'parameters[date_from]': date_from if isinstance(date_from, str) else date_from.strftime('%Y-%m-%d'), 
+                'parameters[date_from]': date_from, 
                 'parameters[date_to]': temp_to,
                 'pagesize': 1000
             }
@@ -982,8 +983,8 @@ if __name__ == '__main__':
     result['incomeStatement'] = bz.incomeStatement()
     result['operationRatios'] = bz.operationRatios()
     # listFilling = bz.listFilling()
-    result['earnings'] = bz.earnings()
-    result['dividends'] = bz.dividends()
+    result['earnings'] = bz.earnings(df=False)
+    result['dividends'] = bz.dividends(df=False)
     result['splits'] = bz.splits(df=False)
     result['ownership'] = bz.ownership()
     result['shortInterest'] = bz.shortInterest(df=False)
@@ -993,11 +994,10 @@ if __name__ == '__main__':
     relatedStocks = bz.relatedStocks()
     result['relatedStocks'] = (relatedStocks['companyStandardName'] + ' (' + relatedStocks['symbol'] + ':' + relatedStocks['bzExchange'] +')').to_list()
     # percentileStats = bz.percentileStats()
-    result['earningsHistoric'] = bz.earningsHistoric()
-
-
-
-    earningsCalendar = bz.earningsCalendar(ldf=False)
+    
+    
+    earningsHistoric = bz.earningsHistoric(df=False)
+    earningsCalendar = bz.earningsCalendar(df=False)
 
     # Analyze earnings
     if False:
