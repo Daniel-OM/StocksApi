@@ -10,7 +10,7 @@ import requests
 import urllib3
 from bs4 import BeautifulSoup
 
-from data import DataProvider
+from .data import DataProvider
 
 
 class ERROR(Exception):
