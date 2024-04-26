@@ -148,12 +148,14 @@ class YahooFinance(DataProvider):
             'cookie': 'A1=d=AQABBDP8ImQCEGphNhsXE3j7s4l9ziK1mJMFEgEBCAF70GX9Zdwr0iMA_eMBAAcILPwiZMBYI28&S=AQAAApVQ27mmHj84pi0oRFohDHI;'
         }
         params: dict = {
-            'period1': start.timestamp(),
-            'period2': end.timestamp(),
             'interval': interval,
             'includePrePost': True,
             'events': 'div|split|earn',
         }
+        if start != None:
+            params['period1'] = start.timestamp()
+        if end != None:
+            params['period2'] = end.timestamp()
         
         return self._request(url=url, headers=headers, params=params).json()
 
@@ -232,7 +234,7 @@ if __name__ == '__main__':
     balance_sheet: list = {k: [i for i in v if i != None] for d in balance_sheet if len(d.keys()) > 1 \
                            for k, v in d.items() if k not in ['meta', 'timestamp']}
     insights: dict = ys.getInsights(ticker=ticker)['finance']['result'][0]
-    price_raw: dict = ys.getPrice(ticker=ticker)['chart']['result'][0]
+    price_raw: dict = ys.getPrice(ticker=ticker, interval='1m')['chart']['result'][0]
     trading_periods = {
         'pre': {'start': dt.datetime.fromtimestamp(price_raw['meta']['currentTradingPeriod']['pre']['start']).time(),   
                 'end':dt.datetime.fromtimestamp(price_raw['meta']['currentTradingPeriod']['pre']['end']).time()},
@@ -241,7 +243,17 @@ if __name__ == '__main__':
         'post': {'start': dt.datetime.fromtimestamp(price_raw['meta']['currentTradingPeriod']['post']['start']).time(),   
                 'end':dt.datetime.fromtimestamp(price_raw['meta']['currentTradingPeriod']['post']['end']).time()}
     }
-    dates = [dt.datetime.fromtimestamp(date) for date in data['timestamp']]
+    def checkDateSession(date:dt.datetime, trading_periods:dict):   
+        for session, v in trading_periods.items():
+            if v['start'] <= date.time() and date.time() < v['end']:
+                return session
+        return None
+    data: list = [{**{'date': d}, 
+                   **{k: v[i] for k, v in price_raw['indicators']['quote'][0].items()}, 
+                   **{'session':checkDateSession(d, trading_periods)}} \
+                  for i, d in enumerate([dt.datetime.fromtimestamp(date) for date in price_raw['timestamp']])]
+    data = [{**{'date': d}, **{k: v[i] for k, v in price_raw['indicators']['quote'][0].items()}} \
+    for i, d in enumerate([dt.datetime.fromtimestamp(date) for date in price_raw['timestamp']])]
     
     result: dict = {
         'Ticker': ticker,
@@ -282,5 +294,6 @@ if __name__ == '__main__':
         'SEC': insights['secReports'],
         'bullishStories': insights['upsell']['msBullishSummary'],
         'bearishStories': insights['upsell']['msBearishSummary'],
+        'candles': data
     }
     
