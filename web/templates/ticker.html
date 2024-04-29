@@ -32,12 +32,12 @@
 
                     <div class="row">
                         <div class="col-sm-6 mt-0">
-                            <label class="form-label">Compañía</label>
+                            <label class="form-label">Company</label>
                             <input id="company" name="company" type="text" placeholder="Ej: Apple" class="form-control">
                         </div>
 
                         <div class="col-sm-6">
-                            <label class="form-label">Símbolo</label>
+                            <label class="form-label">Symbol</label>
                             <input id="symbol" name="symbol" type="text" placeholder="Ej: AAPL" class="form-control">
                         </div>
                     </div>
@@ -56,29 +56,48 @@
         <div class="col">
             <div class="card">
                 <div class="card-header">
-                    <h1>{{ data['Company'] }} ({{ data['Ticker'] }})</h1>
-                    <div id="logotype"> {{ data['Logotype'] }} </div>
+                    <h1>{{ data['company'] }} ({{ data['ticker'] }})</h1>
+                    <div id="logotype"> {{ data['logotype'] }} </div>
                 </div>
 
                 <div class="card-body mt-0">
                     <table style="width:100%;">
                         <tr>
-                            <th>Mercado</th>
-                            <td> {{ data['Exchange'] }} </td>
+                            <th>Exchange</th>
+                            <td> {{ data['exchange'] }} </td>
                             <th>Sector</th>
-                            <td> {{ data['Sector'] }} </td>
+                            <td> {{ data['sector'] }} </td>
                         </tr>
                         <tr class="ms-5">
-                            <th>País</th>
-                            <td> {{ data['Country'] }} </td>
+                            <th>Country</th>
+                            <td> {{ data['country'] }} </td>
                             <th>Sub Sector</th>
-                            <td> {{ data['Sub-Sector'] }} </td>
+                            <td> {{ data['sub_sector'] }} </td>
                         </tr>
                     </table>
                 </div>
 
                 <div class="card-body mt-0">
-                    {{ data['Description'] }}
+                    {{ data['description'] }}
+                </div>
+
+                <div class="card-body mt-0">
+                    <div class="row">
+                        <div class="col">
+                            <ul>
+                                {% for i in data['bullish_stories'] %}
+                                    <li>{{ i|safe }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="col">
+                            <ul>
+                                {% for i in data['bearish_stories'] %}
+                                    <li>{{ i|safe }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -89,8 +108,8 @@
             <div class="card">
                 <div class="card-header border-bottom-0 pb-1 mb-0">
                     <div class="text-center">
-                        <span class="fw-medium mb-1">Empleados</span>
-                        <h2 class="fw-bold mb-0">{{ data['Employees'] }}</h2>
+                        <span class="fw-medium mb-1">Employees</span>
+                        <h2 class="fw-bold mb-0">{{ data['employees'] }}</h2>
                     </div>
                 </div>
             </div>
@@ -99,8 +118,8 @@
             <div class="card">
                 <div class="card-header border-bottom-0 pb-1 mb-0">
                     <div class="text-center">
-                        <span class="fw-medium mb-1">Activos</span>
-                        <h2 class="fw-bold mb-0">{{ data['Assets'] }}</h2>
+                        <span class="fw-medium mb-1">Assets</span>
+                        <h2 class="fw-bold mb-0">{{ data['assets'] }}</h2>
                     </div>
                 </div>
             </div>
@@ -109,8 +128,8 @@
             <div class="card">
                 <div class="card-header border-bottom-0 pb-1 mb-0">
                     <div class="text-center">
-                        <span class="fw-medium mb-1">Pasivos</span>
-                        <h2 class="fw-bold mb-0">{{ data['Liabilities'] }}</h2>
+                        <span class="fw-medium mb-1">Liabilities</span>
+                        <h2 class="fw-bold mb-0">{{ data['liabilities'] }}</h2>
                     </div>
                 </div>
             </div>
@@ -122,9 +141,8 @@
             <div class="card">
                 <div class="card-header border-bottom-0 pb-1 mb-0">
                     <div class="text-center">
-                        <span class="fw-medium mb-1">Precio</span>
-                        <h2 class="fw-bold mb-0">{{ data['Price']['Value'] }}</h2>
-                        <div class="fw-muted mb-0">{{ data['Price']['Time'] }}</div>
+                        <span class="fw-medium mb-1">Price</span>
+                        <h2 class="fw-bold mb-0">{{ data['price']['fmt'] }}</h2>
                     </div>
                 </div>
             </div>
@@ -133,9 +151,8 @@
             <div class="card">
                 <div class="card-header border-bottom-0 pb-1 mb-0">
                     <div class="text-center">
-                        <span class="fw-medium mb-1">Ingresos Brutos</span>
-                        <h2 class="fw-bold mb-0">{{ data['Revenue']['TTM'] }}</h2>
-                        <div class="fw-muted mb-0">{{ data['Revenue']['Last'] }}</div>
+                        <span class="fw-medium mb-1">Revenue</span>
+                        <h2 class="fw-bold mb-0">{{ data['last_revenue'] }}</h2>
                     </div>
                 </div>
             </div>
@@ -144,9 +161,8 @@
             <div class="card">
                 <div class="card-header border-bottom-0 pb-1 mb-0">
                     <div class="text-center">
-                        <span class="fw-medium mb-1">Beneficios Netos</span>
-                        <h2 class="fw-bold mb-0">{{ data['Net-Earnings']['TTM'] }}</h2>
-                        <div class="fw-muted mb-0">{{ data['Net-Earnings']['Last'] }}</div>
+                        <span class="fw-medium mb-1">Net Earnings</span>
+                        <h2 class="fw-bold mb-0">{{ data['last_net_earnings'] }}</h2>
                     </div>
                 </div>
             </div>
@@ -158,8 +174,8 @@
             <div class="card">
                 <div class="card-header border-bottom-0 pb-1 mb-0">
                     <div class="text-center">
-                        <span class="fw-medium mb-1">Beneficio Por Acción</span>
-                        <h2 class="fw-bold mb-0">{{ data['BPA'] }}</h2>
+                        <span class="fw-medium mb-1">Earnings Per Share</span>
+                        <h2 class="fw-bold mb-0">{{ data['eps']['fmt'] }}</h2>
                     </div>
                 </div>
             </div>
@@ -169,7 +185,7 @@
                 <div class="card-header border-bottom-0 pb-1 mb-0">
                     <div class="text-center">
                         <span class="fw-medium mb-1">Price Earnings Ratio</span>
-                        <h2 class="fw-bold mb-0">{{ data['PER'] }}</h2>
+                        <h2 class="fw-bold mb-0">{{ data['per']['fmt'] }}</h2>
                     </div>
                 </div>
             </div>
@@ -179,11 +195,34 @@
                 <div class="card-header border-bottom-0 pb-1 mb-0">
                     <div class="text-center">
                         <span class="fw-medium mb-1">Beta</span>
-                        <h2 class="fw-bold mb-0">{{ data['BETA'] }}</h2>
+                        <h2 class="fw-bold mb-0">{{ data['beta']['fmt'] }}</h2>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="row">
+        
+		<div class="card">
+		    <div class="card-header">
+                <h5 class="mb-0"></h5>
+            </div>
+
+            <div class="card-body">
+                <div class="chart-container">
+                    <div class="chart has-fixed-height" id="candlestick_chart" style="width: 100%;height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="gridjs-secfillings" style="padding: 0;"></div>
+    </div>
+
+    <div class="row">
+        <div class="gridjs-officers" style="padding: 0;"></div>
     </div>
 {% endif %}
 {% endblock %}
@@ -196,7 +235,7 @@
         let company = document.forms["ticker_form"]["company"].value;
         let symbol = document.forms["ticker_form"]["symbol"].value;
         if (company == "" & symbol == "") {
-            alert("Debes especificar el nombre de la empresa o su símbolo.");
+            alert("Insert the company name or it's symbol to search.");
             return false;
         }
     }
@@ -204,8 +243,17 @@
 
 {% if (data | length) > 0 %}
     <script>
-        document.getElementById('company').value = "{{ data['Company'] }}";
-        document.getElementById('symbol').value = "{{ data['Ticker'] }}";
+        let company_input = document.getElementById('company');
+        let ticker_input = document.getElementById('symbol');
+
+        company_input.value = "{{ data['company'] }}";
+        company_input.addEventListener('change', () => {
+            ticker_input.value = '';
+        });
+        ticker_input.value = "{{ data['ticker'] }}";
+        ticker_input.addEventListener('change', () => {
+            company_input.value = '';
+        });
     </script>
 {% else %}
     <script>
@@ -215,4 +263,426 @@
     </script>
 {% endif %}
 
+<script>
+    document.addEventListener('DOMContentLoaded', () => { 
+        // Define element
+        var candlestick_chart_element = document.getElementById('candlestick_chart');
+        console.log(candlestick_chart_element);
+        if (candlestick_chart_element) {
+            console.log('Entered');
+            // Initialize chart
+            var candlestick_chart = echarts.init(candlestick_chart_element, null, { renderer: 'svg' });
+
+            // Options
+            candlestick_chart.setOption({
+
+                // Define colors
+                // color: '#66BB6A',
+                
+                darkMode: 'auto',
+                backgroundColor: '#fff',
+
+                // Global text styles
+                textStyle: {
+                    color: 'var(--text)',
+                    fontSize: 14,
+                    lineHeight: 22,
+                    textBorderColor: 'transparent'
+                },
+
+                // Chart animation duration
+                animationDuration: 750,
+
+                // Setup grid
+                grid: {
+                    left: 10,
+                    right: 10,
+                    top: 35,
+                    bottom: 60,
+                    containLabel: true,
+                    backgroundColor: 'white',
+                    show: true
+                },
+
+                // Add legend
+                legend: {
+                    data: ["{{ data['ticker']|safe }}"],
+                    itemHeight: 8,
+                    itemGap: 30,
+                    textStyle: {
+                        color: 'var(--text)'
+                    }
+                },
+
+                // Add tooltip
+                tooltip: {
+                    trigger: 'axis',
+                    className: 'shadow-sm rounded',
+                    backgroundColor: 'var(--white)',
+                    borderColor: 'var(--black)',
+                    padding: 15,
+                    textStyle: {
+                        color: '#000'
+                    },
+                    formatter: function (params) {
+                        var res = params[0].name;
+                        for (var i = params.length - 1; i >= 0; i--) {
+                            if (params[i].value instanceof Array) {
+                                res += '<br/>' + params[i].seriesName;
+                                res += '<br/> Open: ' + params[i].value[2] + ' &nbsp;&nbsp; High: ' + params[i].value[4];
+                                res += '<br/> CLose: ' + params[i].value[1] + ' &nbsp;&nbsp; Low: ' + params[i].value[3];
+                            }
+                            else {
+                                res += '<br/>' + params[i].seriesName;
+                                res += ': ' + params[i].value;
+                            }
+                        }
+                        return res;
+                    }
+                },
+                toolbox: {
+                    show: false,
+                },
+
+                // Enable data zoom
+                dataZoom: [
+                    {
+                        type: 'inside',
+                        start: 0,
+                        end: 100
+                    },
+                    {
+                        show: true,
+                        type: 'slider',
+                        realtime: true,
+                        start: 0,
+                        end: 100,
+                        height: 40,
+                        bottom: 10,
+                        fillerColor: 'rgb(from var(--white) r g b / 5%)',
+                        textStyle: {
+                            color: 'var(--text)'
+                        },
+                        handleStyle: {
+                            color: '#8fb0f7',
+                            borderColor: 'rgb(from var(--white) r g b / 25%)'
+                        },
+                        moveHandleStyle: {
+                            color: '#8fb0f7',
+                            borderColor: 'rgb(from var(--white) r g b / 25%)'
+                        },
+                        dataBackground: {
+                            lineStyle: {
+                                color: 'var(--grey-500)'
+                            },
+                            areaStyle: {
+                                color: 'var(--grey-500)',
+                                opacity: 0.1
+                            }
+                        }
+                    }
+                ],
+
+                // Horizontal axis
+                xAxis: [{
+                    type: 'category',
+                    data: JSON.parse('{{ data["candles"]["date"]|tojson|safe }}'),
+                    axisLabel: {
+                        color: 'rgba(var(--text), .65)'
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            color: 'var(--white)'
+                        }
+                    },
+                    splitLine: {
+                        show: true,
+                        lineStyle: {
+                            color: 'var(--white)',
+                            type: 'dashed'
+                        }
+                    },
+                    splitArea: {
+                        show: true,
+                        areaStyle: {
+                            color: ['rgb(from var(--white) r g b / 99%)']//, 'rgb(from var(--black) r g b / 5%)']
+                        }
+                    }
+                },],
+
+                // Vertical axis
+                yAxis: [
+                    {
+                        type: 'value',
+                        scale: true,
+                        splitNumber: 5,
+                        boundaryGap: [0.01, 0.01],
+                        axisLabel: {
+                            color: 'rgb(from var(--text) r g b / 65%)'
+                        },
+                        axisLine: {
+                            show: true,
+                            lineStyle: {
+                                color: 'var(--white)'
+                            }
+                        },
+                        splitLine: {
+                            lineStyle: {
+                                color: 'var(--white)'
+                            }
+                        }
+                    },
+                ],
+
+                // Add series
+                series: [
+                    {
+                        name: "{{ data['ticker']|safe }}",
+                        type: 'candlestick',
+                        data: JSON.parse("{{ data['candles']['price']|safe }}"),
+                    },
+                ]
+            });
+        }
+
+        // Resize function
+        var triggerChartResize = function() {
+            candlestick_chart_element && candlestick_chart.resize();
+        };
+
+        // On sidebar width change
+        var sidebarToggle = document.querySelectorAll('.sidebar-control');
+        if (sidebarToggle) {
+            sidebarToggle.forEach(function(togglers) {
+                togglers.addEventListener('click', triggerChartResize);
+            });
+        }
+
+        // On window resize
+        var resizeCharts;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeCharts);
+            resizeCharts = setTimeout(function () {
+                triggerChartResize();
+            }, 200);
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const sec_filings = document.querySelector(".gridjs-secfillings");
+        if(sec_filings) {
+            const sec_filings_table = new gridjs.Grid({
+                className: {
+                    table: 'table'
+                },
+                resizable: true,
+                sort: true,
+                pagination: true,
+                columns: JSON.parse('{{ data["sec_fillings"]["columns"]|tojson|safe }}'),
+                data: JSON.parse('{{ data["sec_fillings"]["data"]|tojson|safe }}')
+            });
+            sec_filings_table.render(sec_filings);
+        }
+
+        const officers = document.querySelector(".gridjs-officers");
+        if(officers) {
+            const officers_table = new gridjs.Grid({
+                className: {
+                    table: 'table'
+                },
+                resizable: true,
+                sort: true,
+                pagination: true,
+                columns: JSON.parse('{{ data["officers"]["columns"]|tojson|safe }}'),
+                data: JSON.parse('{{ data["officers"]["data"]|tojson|safe }}')
+            });
+            officers_table.render(officers);
+        }
+
+    });
+</script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => { 
+        // Define element
+        var candlestick_chart_element = document.getElementById('candlestick_chart');
+        console.log(candlestick_chart_element);
+        if (candlestick_chart_element) {
+            console.log('Entered');
+            // Initialize chart
+            var candlestick_chart = echarts.init(candlestick_chart_element, null, { renderer: 'svg' });
+
+            // Options
+            candlestick_chart.setOption({
+
+                // Define colors
+                // color: '#66BB6A',
+                
+                darkMode: 'auto',
+                backgroundColor: '#fff',
+
+                // Global text styles
+                textStyle: {
+                    color: 'var(--text)',
+                    fontSize: 14,
+                    lineHeight: 22,
+                    textBorderColor: 'transparent'
+                },
+
+                // Chart animation duration
+                animationDuration: 750,
+
+                // Setup grid
+                grid: {
+                    left: 10,
+                    right: 10,
+                    top: 35,
+                    bottom: 60,
+                    containLabel: true,
+                    backgroundColor: 'white',
+                    show: true
+                },
+
+                // Add legend
+                legend: {
+                    data: ["{{ data['earnings']['columns']|safe }}"],
+                    itemHeight: 8,
+                    itemGap: 30,
+                    textStyle: {
+                        color: 'var(--text)'
+                    }
+                },
+
+                toolbox: {
+                    show: false,
+                },
+
+                // Enable data zoom
+                dataZoom: [
+                    {
+                        type: 'inside',
+                        start: 0,
+                        end: 100
+                    },
+                    {
+                        show: true,
+                        type: 'slider',
+                        realtime: true,
+                        start: 0,
+                        end: 100,
+                        height: 40,
+                        bottom: 10,
+                        fillerColor: 'rgb(from var(--white) r g b / 5%)',
+                        textStyle: {
+                            color: 'var(--text)'
+                        },
+                        handleStyle: {
+                            color: '#8fb0f7',
+                            borderColor: 'rgb(from var(--white) r g b / 25%)'
+                        },
+                        moveHandleStyle: {
+                            color: '#8fb0f7',
+                            borderColor: 'rgb(from var(--white) r g b / 25%)'
+                        },
+                        dataBackground: {
+                            lineStyle: {
+                                color: 'var(--grey-500)'
+                            },
+                            areaStyle: {
+                                color: 'var(--grey-500)',
+                                opacity: 0.1
+                            }
+                        }
+                    }
+                ],
+
+                // Horizontal axis
+                xAxis: [{
+                    type: 'category',
+                    data: JSON.parse('{{ data["candles"]["date"]|tojson|safe }}'),
+                    axisLabel: {
+                        color: 'rgba(var(--text), .65)'
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            color: 'var(--white)'
+                        }
+                    },
+                    splitLine: {
+                        show: true,
+                        lineStyle: {
+                            color: 'var(--white)',
+                            type: 'dashed'
+                        }
+                    },
+                    splitArea: {
+                        show: true,
+                        areaStyle: {
+                            color: ['rgb(from var(--white) r g b / 99%)']//, 'rgb(from var(--black) r g b / 5%)']
+                        }
+                    }
+                },],
+
+                // Vertical axis
+                yAxis: [
+                    {
+                        type: 'value',
+                        scale: true,
+                        splitNumber: 5,
+                        boundaryGap: [0.01, 0.01],
+                        axisLabel: {
+                            color: 'rgb(from var(--text) r g b / 65%)'
+                        },
+                        axisLine: {
+                            show: true,
+                            lineStyle: {
+                                color: 'var(--white)'
+                            }
+                        },
+                        splitLine: {
+                            lineStyle: {
+                                color: 'var(--white)'
+                            }
+                        }
+                    },
+                ],
+
+                // Add series
+                series: [
+                    {
+                        name: "{{ data['ticker']|safe }}",
+                        type: 'candlestick',
+                        data: JSON.parse("{{ data['candles']['price']|safe }}"),
+                    },
+                ]
+            });
+        }
+
+        // Resize function
+        var triggerChartResize = function() {
+            candlestick_chart_element && candlestick_chart.resize();
+        };
+
+        // On sidebar width change
+        var sidebarToggle = document.querySelectorAll('.sidebar-control');
+        if (sidebarToggle) {
+            sidebarToggle.forEach(function(togglers) {
+                togglers.addEventListener('click', triggerChartResize);
+            });
+        }
+
+        // On window resize
+        var resizeCharts;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeCharts);
+            resizeCharts = setTimeout(function () {
+                triggerChartResize();
+            }, 200);
+        });
+    });
+</script>
 {% endblock %}

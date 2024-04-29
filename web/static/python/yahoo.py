@@ -220,6 +220,22 @@ class YahooFinance(DataProvider):
 
         url: str = 'https://query1.finance.yahoo.com/ws/screeners/v1/finance/calendar-events?countPerDay=100&economicEventsHighImportanceOnly=true&economicEventsRegionFilter=&endDate=1715184000000&modules=economicEvents&startDate=1713283200000&lang=en-US&region=US'
 
+# checKey = lambda k, dic: (dic[k] if k in dic else None) if dic != None else None
+def checKey(keys:(int | str | list[str]), dic:dict):
+
+    if isinstance(keys, list):
+        value: dict = dic
+        for key in keys:
+            if key in value:
+                value = value[key]
+            else:
+                value = None
+                break
+
+        return value
+    else:
+        return (dic[keys] if keys in dic else None) if dic != None else None
+    
 if __name__ == '__main__':
     
     text: str = 'aapl'
@@ -257,43 +273,57 @@ if __name__ == '__main__':
     
     result: dict = {
         'Ticker': ticker,
-        'Company': quote['longName'],
-        'Exchange': quote['fullExchangeName'],
-        'Type': quote['quoteType'],
-        'TimeZone': quote['exchangeTimezoneName'],
-        'Sector': info['sector'],
-        'Sub-Sector': info['industry'],
-        'Employees': info['fullTimeEmployees'],
-        'Description': info['longBusinessSummary'],
-        'Address': info['address1'],
-        'City': info['city'],
-        'ZIP': info['zip'],
-        'Country': info['country'],
-        'Phone': info['phone'],
-        'Website': info['website'],
+        'Company': checKey('longName', quote),
+        'Exchange': checKey('fullExchangeName', quote),
+        'Type': checKey('quoteType', quote),
+        'TimeZone': checKey('exchangeTimezoneName', quote),
+        'Sector': checKey('sector', info),
+        'Sub-Sector': checKey('industry', info),
+        'Employees': checKey('fullTimeEmployees', info),
+        'Description': checKey('longBusinessSummary', info),
+        'Address': checKey('address1', info),
+        'City': checKey('city', info),
+        'ZIP': checKey('zip', info),
+        'Country': checKey('country', info),
+        'Phone': checKey('phone', info),
+        'Website': checKey('website', info),
         'Logotype': '',
-        'IPO': dt.datetime.fromtimestamp(price_raw['firstTradeDate']).strftime('%Y-%m-%d'),
-        'Price': finance['price']['regularMarketPrice']['raw'],
-        'Volume': finance['price']['regularMarketVolume']['raw'],
-        'EPS': finance['summaryDetail']['trailingEps'],
-        'PE': finance['summaryDetail']['forwardPE'],
-        'BETA': finance['summaryDetail']['beta'],
-        'AvgVolume': finance['summeryDetail']['averageVolume']['raw'],
-        'earnings': [{'date':e['date'], 'actual':e['actual']['raw'], 'estimate':e['estimate']['raw']} \
-                     for e in  finance['earnings']['earningsChart']['quarterly']] + \
-                    [{'date': finance['earnings']['earningsChart']['currentQuarterEstimateDate']+finance['earnings']['earningsChart']['currentQuarterEstimateYear'],
-                      'actual': None, 'estimate': finance['earnings']['earningsChart']['currentQuarterEstimate']['raw']}],
-        'earningsDate': finance['earnings']['earningsChart']['earningsDate'],
-        'officers': [{k: (o[k] if k in o else None) for k in ['name', 'age', 'title', 'yearBorn']} for o in info['companyOfficers']],
-        'Revenue': {'TTM': sum([i['totalRevenue']['raw'] for i in finance['incomeStatementHistoryQuarterly']['incomeStatementHistory']]), 
-            'Last':finance['incomeStatementHistory']['incomeStatementHistory'][0]['totalRevenue']['fmt']},
-        'Net-Earnings': {'TTM':sum([i['netIncome']['raw'] for i in finance['incomeStatementHistoryQuarterly']['incomeStatementHistory']]), 
-            'Last':finance['incomeStatementHistory']['incomeStatementHistory'][0]['netIncome']['fmt']},
-        'Assets': balance_sheet['annualTotalAssets'][-1]['reportedValue']['fmt'],
-        'Liabilities': balance_sheet[1]['annualTotalLiabilitiesNetMinorityInterest'][-1]['reportedValue']['fmt'],
-        'SEC': insights['secReports'],
-        'bullishStories': insights['upsell']['msBullishSummary'],
-        'bearishStories': insights['upsell']['msBearishSummary'],
+        'IPO': dt.datetime.fromtimestamp(checKey('firstTradeDate', price_raw)).strftime('%Y-%m-%d') 
+                if checKey('firstTradeDate', price_raw) else None,
+        'Price': checKey(['price', 'regularMarketPrice', 'raw'], finance),
+        'Volume': checKey(['price', 'regularMarketVolume', 'raw'], finance),
+        'EPS': checKey(['financialData', 'revenuePerShare', 'raw'], finance),
+        'PER': checKey(['summaryDetail', 'forwardPE', 'raw'], finance),
+        'BETA': checKey(['summaryDetail', 'beta', 'raw'], finance),
+        'dividend': checKey(['summaryDetail', 'dividendYield', 'raw'], finance),
+        'AvgVolume': checKey(['summaryDetail', 'averageVolume', 'raw'], finance),
+        'earningsDate': checKey(['earnings','earningsChart','earningsDate'], finance)[0]['fmt'],
+        'Assets': checKey('annualTotalAssets', balance_sheet)[-1]['reportedValue']['fmt'],
+        'Liabilities': checKey('annualTotalLiabilitiesNetMinorityInterest', balance_sheet)[-1]['reportedValue']['fmt'],
+        'SEC': checKey('secReports', insights),
+        'bullishStories': checKey(['upsell', 'msBullishSummary'], insights),
+        'bearishStories': checKey(['upsell', 'msBearishSummary'], insights),
         'candles': data
     }
     
+    if checKey(['earnings', 'earningsChart'], finance):
+        result['earnings'] = [{'date':checKey('date', e), 'actual':checKey(['actual', 'raw'], e), 'estimate':checKey(['estimate', 'raw'], e)} \
+                     for e in  checKey(['earnings', 'earningsChart', 'quarterly'], finance)] + \
+                    [{'date': f"{checKey(['earnings','earningsChart','currentQuarterEstimateDate'], finance)}{checKey(['earnings','earningsChart','currentQuarterEstimateYear'], finance)}",
+                      'actual': None, 'estimate': checKey(['earnings','earningsChart','currentQuarterEstimate','raw'], finance)}]
+    else:
+        result['earnings'] = None
+        
+    if checKey('companyOfficers', info):
+        result['officers'] = [{k: (o[k] if k in o else None) for k in ['name', 'age', 'title', 'yearBorn']} for o in checKey('companyOfficers', info)]
+    else:
+        result['officers'] = None
+
+    if checKey(['incomeStatementHistoryQuarterly', 'incomeStatementHistory'],finance):
+        result['Revenue'] = {'TTM': sum([checKey(['totalRevenue', 'raw'], i) for i in checKey(['incomeStatementHistoryQuarterly', 'incomeStatementHistory'],finance)]), 
+                            'Last':checKey(['incomeStatementHistory','incomeStatementHistory'], finance)[0]['totalRevenue']['fmt']}
+        result['Net-Earnings'] = {'TTM':sum([checKey(['netIncome','raw'], i) for i in checKey(['incomeStatementHistoryQuarterly','incomeStatementHistory'], finance)]), 
+                            'Last':checKey(['incomeStatementHistory','incomeStatementHistory'], finance)[0]['netIncome']['fmt']}
+    else:
+        result['Revenue'] = None
+        result['Net-Earnings'] = None

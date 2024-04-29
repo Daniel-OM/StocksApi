@@ -47,6 +47,31 @@ a {
     border-radius: 0.8rem !important;
 }
 
+.gridjs-container
+{
+    border-radius: 1.5rem;
+
+    & .gridjs-wrapper,
+    table .gridjs-table {
+        border-top-left-radius: 1.5rem;
+        border-top-right-radius: 1.5rem;
+    }
+
+    thead {
+        border-top-left-radius: 1.5rem;
+        border-top-right-radius: 1.5rem;
+
+        tr {
+            border-top-left-radius: 1.5rem;
+            border-top-right-radius: 1.5rem;
+        }
+    }
+
+    & .gridjs-footer {
+        border-bottom-left-radius: 1.5rem;
+        border-bottom-right-radius: 1.5rem;
+    }
+}
 
 .custom-icon {
     display: inline-block;
